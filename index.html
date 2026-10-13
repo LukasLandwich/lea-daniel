@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lea &amp; Daniel – Rückmeldung zur Hochzeit</title>
+  <meta name="description" content="Rückmeldung zur Hochzeit von Lea und Daniel am 04 Juni 2027.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#9E9C97">
+  <link rel="preload" href="fonts/italiana-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip" href="#rsvp">Zum Formular springen</a>
+
+  <!-- ===== HERO (Kartenvorderseite) ===== -->
+  <header class="hero paper paper--stone" id="top">
+    <p class="hero__names" aria-label="Lea und Daniel">
+      <span>Lea</span><span>&amp;</span><span>Daniel</span>
+    </p>
+
+    <!-- Variante wählen: script.js → HERO_VARIANT = 'unser' | 'save' -->
+    <h1 class="hero__title" id="heroTitle" aria-label="Unser Fest">
+      <span class="hero__word hero__word--top" id="wordTop" aria-hidden="true">Unser</span>
+      <span class="hero__script" id="wordScript" aria-hidden="true">großes</span>
+      <span class="hero__word hero__word--bottom" id="wordBottom" aria-hidden="true">Fest</span>
+    </h1>
+
+    <!-- Pinselstrich, läuft aus dem rechten Rand -->
+    <svg class="hero__swash" viewBox="0 0 600 40" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <path d="M2 30 C 90 8, 200 6, 330 18 S 520 30, 600 12" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      <path d="M2 30 C 90 12, 200 10, 330 20 S 520 31, 600 14" fill="none" stroke="currentColor" stroke-width=".7" stroke-linecap="round" opacity=".7"/>
+    </svg>
+
+    <p class="hero__lead">Wir heiraten</p>
+    <p class="hero__date"><span class="hero__rule" aria-hidden="true"></span><time datetime="2027-06-04">04 Juni 2027</time></p>
+    <a class="hero__down" href="#rsvp"><span class="hero__arrow" aria-hidden="true"></span><span class="hero__downlabel">Rückmeldung</span></a>
+  </header>
+
+  <!-- ===== FORMULAR (Kartenrückseite) ===== -->
+  <main class="rsvp paper paper--ivory" id="rsvp" tabindex="-1">
+    <div class="rsvp__inner">
+
+      <div id="formView">
+        <h2 class="rsvp__title reveal">Rückmeldung</h2>
+        <p class="rsvp__script reveal" aria-hidden="true">wir freuen uns auf euch!</p>
+
+        <p class="rsvp__intro reveal">
+          Wir heiraten und möchten diesen Tag mit euch feiern. Sagt uns bitte kurz,
+          ob ihr dabei seid und wie viele ihr seid – dann können wir alles liebevoll planen.<br>
+          <strong class="deadline">Bitte gebt uns bis [DATUM] Bescheid.</strong>
+        </p>
+
+        <form id="rsvpForm" class="form" novalidate autocomplete="on">
+
+          <!-- Honeypot: für Menschen unsichtbar -->
+          <div class="hp" aria-hidden="true">
+            <label for="website">Bitte leer lassen</label>
+            <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+          </div>
+
+          <div class="field reveal">
+            <label for="name">Name(n) <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="name" name="name" required autocomplete="name"
+                   aria-describedby="name-err" placeholder="Vor- und Nachname">
+            <p class="err" id="name-err" role="alert"></p>
+          </div>
+
+          <fieldset class="field reveal" aria-describedby="attending-err">
+            <legend>Seid ihr dabei? <span class="req" aria-hidden="true">*</span></legend>
+            <div class="radios">
+              <label class="radio"><input type="radio" name="attending" value="ja" required><span>Wir sind dabei</span></label>
+              <label class="radio"><input type="radio" name="attending" value="nein"><span>Leider können wir nicht</span></label>
+            </div>
+            <p class="err" id="attending-err" role="alert"></p>
+          </fieldset>
+
+          <!-- Nur bei Zusage -->
+          <div class="details" id="details" hidden>
+            <div class="field">
+              <label for="persons">Anzahl Personen (inkl. Kinder)</label>
+              <input type="number" id="persons" name="persons" inputmode="numeric" min="1" max="10" value="1"
+                     aria-describedby="persons-err">
+              <p class="err" id="persons-err" role="alert"></p>
+            </div>
+
+            <div class="field" id="companionsField" hidden>
+              <label for="companions">Namen der Begleitpersonen</label>
+              <input type="text" id="companions" name="companions" placeholder="z. B. Anna, Ben (4)">
+            </div>
+
+            <fieldset class="field" aria-describedby="meals-hint meals-err">
+              <legend>Essen – wie viele Personen jeweils?</legend>
+              <p class="hint" id="meals-hint">Die Summe sollte zur Personenzahl passen.</p>
+              <div class="meals">
+                <label class="meal"><span>Fleisch</span><input type="number" name="meal_meat" min="0" max="10" inputmode="numeric" value="0"></label>
+                <label class="meal"><span>Vegetarisch</span><input type="number" name="meal_veg" min="0" max="10" inputmode="numeric" value="0"></label>
+                <label class="meal"><span>Vegan</span><input type="number" name="meal_vegan" min="0" max="10" inputmode="numeric" value="0"></label>
+              </div>
+              <p class="err" id="meals-err" role="alert"></p>
+            </fieldset>
+
+            <div class="field">
+              <label for="allergies">Allergien / Unverträglichkeiten</label>
+              <textarea id="allergies" name="allergies" rows="2" placeholder="z. B. Nüsse, Laktose …"></textarea>
+            </div>
+          </div>
+
+          <div class="field reveal">
+            <label for="message">Nachricht an uns <span class="opt">(optional)</span></label>
+            <textarea id="message" name="message" rows="3"></textarea>
+          </div>
+
+          <div class="field reveal">
+            <label for="email">E-Mail für Rückfragen <span class="opt">(optional)</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-describedby="email-err">
+            <p class="err" id="email-err" role="alert"></p>
+          </div>
+
+          <div class="actions reveal">
+            <button type="submit" class="btn" id="submitBtn">Antwort senden</button>
+            <p class="status" id="status" role="status" aria-live="polite"></p>
+          </div>
+
+          <p class="privacy reveal">
+            Eure Angaben nutzen wir ausschließlich zur Planung der Hochzeit (Sitzplätze, Essen, Rückfragen).
+            Sie werden in einer privaten Tabelle gespeichert, nicht weitergegeben und nach der Hochzeit gelöscht.
+            Diese Seite verwendet keine Cookies und kein Tracking.
+            <a href="#impressum">Impressum</a> · <a href="#datenschutz">Datenschutz</a>
+          </p>
+        </form>
+      </div>
+
+      <!-- Danke-Ansicht -->
+      <div id="thanksView" hidden>
+        <h2 class="rsvp__title" id="thanksTitle" tabindex="-1"></h2>
+        <p class="rsvp__script" id="thanksScript" aria-hidden="true"></p>
+        <p class="rsvp__intro" id="thanksText"></p>
+      </div>
+
+      <p class="signature" aria-label="Lea und Daniel">Lea und Daniel</p>
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
