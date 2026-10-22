@@ -8,14 +8,10 @@
 var SHEET_NAME = 'Rückmeldungen';
 
 var FIELDS = [
-  { key: 'name',       label: 'Name(n)' },
+  { key: 'name',       label: 'Name' },
   { key: 'attending',  label: 'Teilnahme' },
-  { key: 'persons',    label: 'Personen' },
-  { key: 'companions', label: 'Begleitpersonen' },
-  { key: 'meal_meat',  label: 'Fleisch' },
-  { key: 'meal_veg',   label: 'Vegetarisch' },
-  { key: 'meal_vegan', label: 'Vegan' },
-  { key: 'allergies',  label: 'Allergien' },
+  { key: 'vegetarian', label: 'Vegetarisch' },
+  { key: 'allergies',  label: 'Allergien / Unverträglichkeiten' },
   { key: 'message',    label: 'Nachricht' },
   { key: 'email',      label: 'E-Mail' }
 ];
@@ -33,9 +29,16 @@ function doPost(e) {
 
     lock.waitLock(20000); // gleichzeitige Schreibzugriffe nacheinander abarbeiten
     var sheet = getSheet_();
-    var row = [new Date()];
-    FIELDS.forEach(function (f) { row.push(clean_(data[f.key])); });
-    sheet.appendRow(row);
+    var now = new Date();
+    data.people.forEach(function (p) {
+      var rec = {
+        name: p.name, attending: p.attending, vegetarian: p.vegetarian,
+        allergies: p.allergies, message: data.message, email: data.email
+      };
+      var row = [now];
+      FIELDS.forEach(function (f) { row.push(clean_(rec[f.key])); });
+      sheet.appendRow(row);
+    });
     SpreadsheetApp.flush();
     return json_({ ok: true });
   } catch (err) {
@@ -51,16 +54,15 @@ function doGet() {
 }
 
 function validate_(d) {
-  if (!d.name || String(d.name).trim().length < 1) return 'Name fehlt.';
-  if (String(d.name).length > 200) return 'Name zu lang.';
-  if (d.attending !== 'ja' && d.attending !== 'nein') return 'Teilnahme fehlt.';
-  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(d.email))) return 'E-Mail ungültig.';
-  if (d.attending === 'ja') {
-    var p = Number(d.persons);
-    if (!(p >= 1 && p <= 10)) return 'Personenzahl ungültig.';
-    var sum = Number(d.meal_meat || 0) + Number(d.meal_veg || 0) + Number(d.meal_vegan || 0);
-    if (sum !== p) return 'Essenswünsche passen nicht zur Personenzahl.';
+  if (!d.people || !d.people.length) return 'Keine Personen angegeben.';
+  if (d.people.length > 20) return 'Zu viele Personen.';
+  for (var i = 0; i < d.people.length; i++) {
+    var p = d.people[i];
+    if (!p.name || String(p.name).trim().length < 1) return 'Name fehlt.';
+    if (String(p.name).length > 200) return 'Name zu lang.';
+    if (p.attending !== 'ja' && p.attending !== 'nein') return 'Teilnahme fehlt.';
   }
+  if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(d.email))) return 'E-Mail ungültig.';
   return null;
 }
 

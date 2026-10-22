@@ -1,4 +1,4 @@
-# Rückmeldeseite Lea & Daniel – 04 Juni 2027
+# Rückmeldeseite Lea & Daniel – 4. Juni 2027
 
 Eine statische Seite (HTML, CSS, JavaScript – kein Build, kein Framework). Die Antworten landen über Google Apps Script in einem Google Sheet. Alles kostenlos.
 
@@ -32,7 +32,7 @@ const WEB_APP_URL = "https://script.google.com/macros/s/…/exec";
 const TEST_MODE = false;   // true = nur Konsole, nichts wird gesendet
 ```
 Weitere Einstellungen dort: `HERO_VARIANT` (`"unser"` = UNSER / FEST, `"save"` = SAVE / DATE), Mindestzeit gegen Spam, Danke-Texte.
-Den Platzhalter `[DATUM]` (Rückmeldefrist), die Links „Impressum / Datenschutz“ und ggf. Texte ändert ihr in `index.html`.
+Den Platzhalter `[DATUM]` (Rückmeldefrist) und ggf. Texte ändert ihr in `index.html`.
 
 ## 4. Veröffentlichen
 
@@ -61,5 +61,4 @@ Die fertige Seiten-URL in einen kostenlosen QR-Generator einfügen (z. B. <https
 - Schriften liegen lokal in `fonts/` (Lizenz: SIL Open Font License – Italiana, Great Vibes, Mrs Saint Delafield, Jost).
 - Keine Cookies, kein Tracking, kein Captcha.
 - Zeilen im Sheet nach der Hochzeit löschen (so steht es im Hinweis unter dem Formular).
-- Impressum und Datenschutzerklärung müsst ihr selbst ergänzen (die Links sind Platzhalter, `#impressum` / `#datenschutz`).
 - Die Seite ist per `noindex` für Suchmaschinen gesperrt.

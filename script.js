@@ -23,7 +23,7 @@ const THANKS = {
   ja: {
     title: "Danke!",
     script: "wir freuen uns so sehr!",
-    text: "Eure Zusage ist bei uns angekommen. Wir können es kaum erwarten, am 04 Juni 2027 mit euch zu feiern. Weitere Infos folgen bald."
+    text: "Eure Zusage ist bei uns angekommen. Wir können es kaum erwarten, am 4. Juni 2027 mit euch zu feiern. Weitere Infos folgen bald."
   },
   nein: {
     title: "Schade!",
@@ -41,7 +41,7 @@ const THANKS = {
 
   const $ = (s, r = document) => r.querySelector(s);
   const form = $("#rsvpForm");
-  const loadedAt = Date.now();
+  let loadedAt = Date.now();
 
   /* Hero-Variante */
   const hv = HERO_VARIANTS[HERO_VARIANT] || HERO_VARIANTS.unser;
@@ -61,65 +61,102 @@ const THANKS = {
     reveals.forEach((el) => el.classList.add("in"));
   }
 
-  /* Zusage-Details ein-/ausblenden */
-  const details = $("#details");
-  const persons = $("#persons");
-  const companionsField = $("#companionsField");
-  const attendingVal = () => (form.querySelector('input[name="attending"]:checked') || {}).value || "";
+  /* Personen */
+  const people = $("#people");
+  const tpl = $("#personTpl");
+  let personSeq = 0;
 
-  function syncDetails() {
-    details.hidden = attendingVal() !== "ja";
-    syncCompanions();
+  function addPerson() {
+    const frag = tpl.content.cloneNode(true);
+    const el = frag.querySelector(".person");
+    const n = ++personSeq;
+    const q = (s) => el.querySelector(s);
+    // eindeutige ids pro Person: Label-Verknüpfung, Gruppenname, Fehlermeldung
+    q(".person__title").id = "person-" + n + "-title";
+    el.setAttribute("aria-labelledby", "person-" + n + "-title");
+    q(".p-name-label").htmlFor = q(".p-name").id = "name-" + n;
+    q(".p-name-err").id = "name-" + n + "-err";
+    q(".p-name").setAttribute("aria-describedby", "name-" + n + "-err");
+    // nur die erste Person per Autofill mit dem eigenen Namen vorbelegen
+    q(".p-name").setAttribute("autocomplete", people.children.length ? "off" : "name");
+    q(".p-allergies-label").htmlFor = q(".p-allergies").id = "allergies-" + n;
+    el.querySelectorAll(".p-att").forEach((r) => {
+      r.name = "attending_" + n;
+      r.addEventListener("change", () => syncDetails(el));
+    });
+    el.querySelector(".person__remove").addEventListener("click", () => {
+      el.remove();
+      renumber();
+      $("#addPersonBtn").focus();
+    });
+    people.appendChild(el);
+    renumber();
+    return el;
   }
-  function syncCompanions() {
-    companionsField.hidden = !(Number(persons.value) > 1) || details.hidden;
+  function renumber() {
+    const all = people.querySelectorAll(".person");
+    all.forEach((el, i) => {
+      el.querySelector(".person__title").textContent = all.length > 1 ? "Person " + (i + 1) : "Eure Antwort";
+      const rm = el.querySelector(".person__remove");
+      rm.hidden = all.length < 2;
+      rm.setAttribute("aria-label", "Person " + (i + 1) + " entfernen");
+    });
   }
-  form.querySelectorAll('input[name="attending"]').forEach((r) => r.addEventListener("change", syncDetails));
-  persons.addEventListener("input", syncCompanions);
+  function syncDetails(el) {
+    const att = el.querySelector(".p-att:checked");
+    el.querySelector(".p-details").hidden = !att || att.value !== "ja";
+  }
+  $("#addPersonBtn").addEventListener("click", () => {
+    const el = addPerson();
+    const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // sanft einblenden und in den sichtbaren Bereich holen
+    el.classList.add("person--new");
+    el.addEventListener("animationend", () => el.classList.remove("person--new"), { once: true });
+    el.querySelector(".p-name").focus({ preventScroll: true });
+    el.scrollIntoView({ behavior: calm ? "auto" : "smooth", block: "center" });
+  });
+  addPerson();
 
   /* Validierung */
-  function setErr(id, msg) {
-    const p = $("#" + id);
-    p.textContent = msg || "";
-    const f = p.closest(".field");
+  function setErr(el, msg) {
+    el.textContent = msg || "";
+    const f = el.closest(".field");
     if (f) f.classList.toggle("invalid", !!msg);
   }
+  function setErrId(id, msg) { setErr($("#" + id), msg); }
 
   function collect() {
     const v = (n) => (form.elements[n].value || "").trim();
-    const att = attendingVal();
-    const data = {
-      name: v("name"),
-      attending: att,
-      persons: "", companions: "", meal_meat: "", meal_veg: "", meal_vegan: "", allergies: "",
+    return {
+      people: Array.from(people.querySelectorAll(".person")).map((el) => {
+        const att = (el.querySelector(".p-att:checked") || {}).value || "";
+        const yes = att === "ja";
+        return {
+          name: el.querySelector(".p-name").value.trim(),
+          attending: att,
+          vegetarian: yes ? (el.querySelector(".p-veg").checked ? "ja" : "nein") : "",
+          allergies: yes ? el.querySelector(".p-allergies").value.trim() : ""
+        };
+      }),
       message: v("message"),
       email: v("email"),
       website: v("website")
     };
-    if (att === "ja") {
-      data.persons = Number(v("persons")) || 0;
-      data.companions = data.persons > 1 ? v("companions") : "";
-      data.meal_meat = Number(v("meal_meat")) || 0;
-      data.meal_veg = Number(v("meal_veg")) || 0;
-      data.meal_vegan = Number(v("meal_vegan")) || 0;
-      data.allergies = v("allergies");
-    }
-    return data;
   }
 
   function validate(d) {
     let first = null;
-    const fail = (id, msg, focusSel) => { setErr(id, msg); if (!first) first = $(focusSel); };
-    ["name-err", "attending-err", "persons-err", "meals-err", "email-err"].forEach((i) => setErr(i, ""));
-
-    if (!d.name) fail("name-err", "Bitte tragt euren Namen ein.", "#name");
-    if (!d.attending) fail("attending-err", "Bitte wählt eine Antwort aus.", 'input[name="attending"]');
-    if (d.attending === "ja") {
-      if (!(d.persons >= 1 && d.persons <= 10)) fail("persons-err", "Bitte gebt eine Zahl zwischen 1 und 10 an.", "#persons");
-      const sum = d.meal_meat + d.meal_veg + d.meal_vegan;
-      if (sum !== d.persons) fail("meals-err", `Die Essenswünsche (${sum}) passen nicht zur Personenzahl (${d.persons}).`, 'input[name="meal_meat"]');
-    }
-    if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) fail("email-err", "Diese E-Mail-Adresse sieht ungewöhnlich aus.", "#email");
+    const fail = (el, msg, focusEl) => { setErr(el, msg); if (!first) first = focusEl; };
+    setErrId("email-err", "");
+    const els = people.querySelectorAll(".person");
+    d.people.forEach((p, i) => {
+      const el = els[i];
+      setErr(el.querySelector(".p-name-err"), "");
+      setErr(el.querySelector(".p-att-err"), "");
+      if (!p.name) fail(el.querySelector(".p-name-err"), "Bitte gib einen Namen ein.", el.querySelector(".p-name"));
+      if (!p.attending) fail(el.querySelector(".p-att-err"), "Bitte wähle eine Antwort aus.", el.querySelector(".p-att"));
+    });
+    if (d.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) fail($("#email-err"), "Diese E-Mail-Adresse sieht ungewöhnlich aus.", $("#email"));
     if (first) first.focus();
     return !first;
   }
@@ -139,7 +176,7 @@ const THANKS = {
     if (!validate(data)) return;
 
     // Honeypot: Bots bekommen scheinbar Erfolg, es wird nichts gespeichert
-    if (data.website) { showThanks(data.attending); return; }
+    if (data.website) { showThanks(data); return; }
 
     if ((Date.now() - loadedAt) / 1000 < MIN_SECONDS) {
       setStatus("Einen kleinen Moment noch – bitte versucht es gleich nochmal.", true);
@@ -163,7 +200,7 @@ const THANKS = {
         const json = await res.json();
         if (!json.ok) throw new Error(json.error || "Unbekannter Fehler");
       }
-      showThanks(data.attending);
+      showThanks(data);
     } catch (err) {
       console.error(err);
       setStatus("Das Senden hat leider nicht geklappt. Bitte prüft eure Verbindung und versucht es nochmal – oder meldet euch direkt bei uns.", true);
@@ -171,8 +208,9 @@ const THANKS = {
     }
   });
 
-  function showThanks(att) {
-    const t = THANKS[att] || THANKS.ja;
+  function showThanks(data) {
+    const anyYes = data.people.some((p) => p.attending === "ja");
+    const t = anyYes ? THANKS.ja : THANKS.nein;
     $("#thanksTitle").textContent = t.title;
     $("#thanksScript").textContent = t.script;
     $("#thanksText").textContent = t.text;
