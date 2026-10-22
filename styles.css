@@ -43,8 +43,6 @@ a{color:inherit}
   background:radial-gradient(120% 90% at 12% 8%,#9bb2a5 0%,var(--stone) 45%,#728d7e 100%)}
 /* feiner Kartenrand */
 .hero::after{content:"";position:absolute;inset:clamp(.7rem,2vw,1.4rem);border:1px solid rgba(245,243,238,.45);border-radius:var(--radius);pointer-events:none}
-/* Diagonale: Lesefluss oben links → unten rechts */
-.hero .hero__names::after{content:"";position:absolute;left:0;top:calc(100% + .8rem);width:1px;height:clamp(3rem,10vh,6rem);background:linear-gradient(var(--cream),transparent);opacity:.6}
 .hero__names{margin:0;display:flex;flex-direction:column;font-family:var(--display);text-transform:uppercase;letter-spacing:.3em;font-size:clamp(1.5rem,5.5vw,2.6rem);line-height:1.6;align-self:start;position:relative}
 .hero__names span:nth-child(2){font-size:.6em;opacity:.8}
 .hero__title{margin:0;font-weight:400;align-self:center;display:grid;position:relative;padding:2rem 0;row-gap:0}
