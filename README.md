@@ -20,8 +20,9 @@ fonts/       lokale Schriften (keine Google-Server)
    - Ausführen als: **Ich**
    - Wer hat Zugriff: **Jeder**
 4. Berechtigungen bestätigen (Google zeigt „App nicht verifiziert“ → *Erweitert → Weiter*; es ist euer eigenes Skript).
-5. Die **Web-App-URL** kopieren (endet auf `/exec`).
-6. Zur Kontrolle die URL im Browser öffnen – es sollte `{"ok":true,…}` erscheinen.
+5. Optional: oben die Funktion `testEintrag` auswählen und **Ausführen** – legt das Blatt „Rückmeldungen“ mit einer Testzeile an (Testzeilen später löschen).
+6. Die **Web-App-URL** kopieren (endet auf `/exec`).
+7. Zur Kontrolle die URL im Browser öffnen – es sollte `{"ok":true,…}` erscheinen.
 
 > Ändert ihr `Code.gs` später, müsst ihr unter *Bereitstellen → Bereitstellungen verwalten* eine **neue Version** veröffentlichen. Die URL bleibt gleich.
 

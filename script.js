@@ -2,11 +2,11 @@
    EINSTELLUNGEN – hier bitte anpassen
    ===================================================== */
 // URL der Google-Apps-Script-Web-App (Schritt 3 der README)
-const WEB_APP_URL = "HIER_DIE_WEB_APP_URL_EINTRAGEN";
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxVz5vwSQ-z1bpjsEjt1ECcAYcNALNMaxLocYMrF3idIFi0fxACX9u2-F_kTJoqsS85/exec";
 
 // true  = Testmodus: nichts wird gesendet, die Antwort erscheint nur in der Konsole (F12)
 // false = echter Betrieb, Antworten landen im Google Sheet
-const TEST_MODE = true;
+const TEST_MODE = false;
 
 // Hero-Wortpaar: "unser" → UNSER / FEST   |   "save" → SAVE / DATE
 const HERO_VARIANT = "unser";

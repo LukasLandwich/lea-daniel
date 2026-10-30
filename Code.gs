@@ -80,10 +80,28 @@ function getSheet_() {
   if (sheet.getLastRow() === 0) {
     var header = ['Zeitstempel'].concat(FIELDS.map(function (f) { return f.label; }));
     sheet.appendRow(header);
-    sheet.getRange(1, 1, 1, header.length).setFontWeight('bold');
+    sheet.getRange(1, 1, 1, header.length).setFontWeight('bold').setBackground('#E4EDE8');
     sheet.setFrozenRows(1);
+    sheet.getRange('A:A').setNumberFormat('dd.mm.yyyy hh:mm');
+    sheet.setColumnWidth(1, 130);
+    sheet.setColumnWidth(2, 180);
+    sheet.setColumnWidth(5, 240);
+    sheet.setColumnWidth(6, 320);
   }
   return sheet;
+}
+
+// Im Apps-Script-Editor auswählen und "Ausführen" klicken: legt das Tabellenblatt an
+// und schreibt eine Testzeile (Berechtigungen werden dabei einmalig abgefragt).
+function testEintrag() {
+  var res = doPost({ postData: { contents: JSON.stringify({
+    people: [
+      { name: 'Test Person', attending: 'ja', vegetarian: 'nein', allergies: 'Nüsse' },
+      { name: 'Test Begleitung', attending: 'nein', vegetarian: '', allergies: '' }
+    ],
+    message: 'Testnachricht', email: 'test@example.com', website: ''
+  }) } });
+  Logger.log(res.getContent());
 }
 
 function json_(obj) {
